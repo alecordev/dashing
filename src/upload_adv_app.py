@@ -11,7 +11,7 @@ import dash_table
 import pandas as pd
 
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 df = pd.DataFrame()
@@ -19,54 +19,54 @@ df = pd.DataFrame()
 app.layout = html.Div(
     [
         dcc.Upload(
-            id='upload-data',
-            children=html.Div(['Drag and Drop or ', html.A('Select Files')]),
+            id="upload-data",
+            children=html.Div(["Drag and Drop or ", html.A("Select Files")]),
             style={
-                'width': '100%',
-                'height': '60px',
-                'lineHeight': '60px',
-                'borderWidth': '1px',
-                'borderStyle': 'dashed',
-                'borderRadius': '5px',
-                'textAlign': 'center',
-                'margin': '10px',
+                "width": "100%",
+                "height": "60px",
+                "lineHeight": "60px",
+                "borderWidth": "1px",
+                "borderStyle": "dashed",
+                "borderRadius": "5px",
+                "textAlign": "center",
+                "margin": "10px",
             },
             # Allow multiple files to be uploaded
             multiple=True,
         ),
-        html.Div(id='output-data-upload'),
+        html.Div(id="output-data-upload"),
     ]
 )
 
 
 def parse_contents(contents, filename, date):
-    content_type, content_string = contents.split(',')
+    content_type, content_string = contents.split(",")
 
     decoded = base64.b64decode(content_string)
     try:
         global df
-        if 'csv' in filename:
+        if "csv" in filename:
             # Assume that the user uploaded a CSV file
-            df = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
+            df = pd.read_csv(io.StringIO(decoded.decode("utf-8")))
             # df[' index'] = range(1, len(df) + 1)
-        elif 'xls' in filename:
+        elif "xls" in filename:
             # Assume that the user uploaded an excel file
             df = pd.read_excel(io.BytesIO(decoded))
             # df[' index'] = range(1, len(df) + 1)
     except Exception as e:
         print(e)
-        return html.Div(['There was an error processing this file.'])
+        return html.Div(["There was an error processing this file."])
 
     return html.Div(
         [
             html.H5(filename),
             html.H6(datetime.datetime.fromtimestamp(date)),
             dash_table.DataTable(
-                data=df.to_dict('records'),
-                id='datatable-paging',
-                columns=[{'name': i, 'id': i} for i in df.columns],
-                export_format='csv',
-                export_headers='display',
+                data=df.to_dict("records"),
+                id="datatable-paging",
+                columns=[{"name": i, "id": i} for i in df.columns],
+                export_format="csv",
+                export_headers="display",
                 merge_duplicate_headers=True,
                 row_deletable=True,
                 editable=True,
@@ -79,7 +79,7 @@ def parse_contents(contents, filename, date):
                 selected_rows=[],
                 page_current=0,
                 page_size=10,
-                page_action='native',
+                page_action="native",
             ),
             html.Hr(),  # horizontal line
             # For debugging, display the raw contents provided by the web browser
@@ -93,21 +93,21 @@ def parse_contents(contents, filename, date):
 
 
 @app.callback(
-    Output('datatable-paging', 'data'),
-    Input('datatable-paging', "page_current"),
-    Input('datatable-paging', "page_size"),
+    Output("datatable-paging", "data"),
+    Input("datatable-paging", "page_current"),
+    Input("datatable-paging", "page_size"),
 )
 def update_table(page_current, page_size):
     return df.iloc[page_current * page_size : (page_current + 1) * page_size].to_dict(
-        'records'
+        "records"
     )
 
 
 @app.callback(
-    Output('output-data-upload', 'children'),
-    Input('upload-data', 'contents'),
-    State('upload-data', 'filename'),
-    State('upload-data', 'last_modified'),
+    Output("output-data-upload", "children"),
+    Input("upload-data", "contents"),
+    State("upload-data", "filename"),
+    State("upload-data", "last_modified"),
 )
 def update_output(list_of_contents, list_of_names, list_of_dates):
     if list_of_contents is not None:
@@ -118,5 +118,5 @@ def update_output(list_of_contents, list_of_names, list_of_dates):
         return children
 
 
-if __name__ == '__main__':
-    app.run_server(host='0.0.0.0', port=8080, debug=True)
+if __name__ == "__main__":
+    app.run_server(host="0.0.0.0", port=8080, debug=True)

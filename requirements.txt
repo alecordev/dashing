@@ -3,6 +3,15 @@ dash-canvas
 dash-renderer
 dash-html-components
 dash-core-components
+dash-bootstrap-components
+dash-daq
+dash-vtk
+dash-canvas
+dash-table
+dash-dangerously-set-inner-html
+dash-pivottable
+dash-bio
 plotly
+numpy
 pandas
 pandas-datareader
